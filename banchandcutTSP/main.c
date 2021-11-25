@@ -148,7 +148,7 @@ int main() {
 	double** M = create_double_matrix(N, N);
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
-			M[i][j] = 20000;
+			M[i][j] = 50000;
 		}
 	}
 
