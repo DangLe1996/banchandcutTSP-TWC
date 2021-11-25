@@ -304,7 +304,7 @@ EXPORT double solve_TSP(int *sequence, double lambda, double delta, double** M, 
 			
 		}
 	}
-	//status = CPXaddrows(env, lp, 0, index1, index, rhs, sense, matbeg, matind, matval, NULL, NULL);
+	status = CPXaddrows(env, lp, 0, index1, index, rhs, sense, matbeg, matind, matval, NULL, NULL);
 	if (status)
 		fprintf(stderr, "CPXaddrows failed.\n");
 	free(matbeg);
