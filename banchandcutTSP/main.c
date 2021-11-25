@@ -30,7 +30,7 @@ void initialize_Instance_Amazon_New_Numpy(double* travelCost, int n_stops) {
 			}
 
 			if (i != j) {
-				printf("%d, %d \n ", i, j);
+				//printf("%d, %d \n ", i, j);
 				index_i[e] = i;
 				index_j[e] = j;
 				index_e[i][j] = e;
@@ -61,7 +61,7 @@ const char* getfield(char* line,  double *input, int pos)
 		double d = atof(tok);
 		input[pos + i] = d;
 		
-		printf(tok);
+		//printf(tok);
 		/*if (!--num)
 			return tok;*/
 	}
@@ -102,7 +102,7 @@ int main() {
 	while (fgets(line, 1024, stream))
 	{
 		char* tmp = strdup(line);
-		printf("Field 3 would be %s\n", getfield(tmp, TWC_data, pos));
+		 getfield(tmp, TWC_data, pos);
 		pos += 3;
 		// NOTE strtok clobbers tmp
 		free(tmp);
@@ -113,8 +113,8 @@ int main() {
 
 	for (int i = 0; i < N; i++) {
 		
-			E_i[i] = TWC_data[i *3];
-			L_i[i] = TWC_data[i*3 + 1];
+			E_i[i] = TWC_data[i *3]*60.0;
+			L_i[i] = TWC_data[i*3 + 1]*60.0;
 			w_i[i] = TWC_data[i*3 + 2];
 		
 	}
@@ -138,7 +138,7 @@ int main() {
 	printf("travel cost is %f",travelCost[1][2]);
 	printf("N is %d", n_stops);*/
 
-	//N = 4;
+	N = 10;
 
 
 	initialize_Instance_Amazon_New_Numpy(travelCost, N);
