@@ -22,17 +22,25 @@ void initialize_Instance_Amazon_New_Numpy(double* travelCost, int n_stops) {
 	for (i = 0; i < N; i++)
 		index_e[i][i] = NONE;
 	e = 0;
-	for (i = 0; i < N; i++) {
-		for (j = 0; j < N; j++) {
+	for (i = 0; i < N-1; i++) {
+		for (j = 1; j < N; j++) {
+
+			if (i == 0 && j == N - 1) {
+				continue;
+			}
+
 			if (i != j) {
+				printf("%d, %d \n ", i, j);
 				index_i[e] = i;
 				index_j[e] = j;
 				index_e[i][j] = e;
 				e++;
 			}
+			
 		}
 	}
-	assert(e == E);
+	E = e;
+	//assert(e == E);
 
 }
 
@@ -66,8 +74,6 @@ int main() {
 	N = N_local;
 	double* travelCost  = malloc(sizeof(double) * (N*N)); 
 	double* sequence  = malloc(sizeof(int) * (N)); 
-	
-
 	double* TWC_data = malloc(sizeof(double) * (N*3));
 
 	char* FilePath = "RouteID_d405eb42-2950-49b1-b09b-0f15df295a36.csv";
@@ -131,6 +137,10 @@ int main() {
 	/*
 	printf("travel cost is %f",travelCost[1][2]);
 	printf("N is %d", n_stops);*/
+
+	//N = 4;
+
+
 	initialize_Instance_Amazon_New_Numpy(travelCost, N);
 	////start = clock();
 	/*printf("Solving TSP with B&C algorithm: \n");*/
@@ -138,13 +148,17 @@ int main() {
 	double** M = create_double_matrix(N, N);
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
-			M[i][j] = 1000;
+			M[i][j] = 10000;
 		}
 	}
 
 	double lambda = 0.5;
 	double delta = 0.5;
+
+
 	N -= 1;
+
+
 	opt_value = solve_TSP(sequence,lambda,delta,M,w_i,E_i,L_i);
 	//printf("Optimal travel time is :  %f \n", opt_value);
 	end = clock();

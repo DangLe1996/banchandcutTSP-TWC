@@ -62,16 +62,21 @@ EXPORT double solve_TSP(int *sequence, double lambda, double delta, double** M, 
 		printf("%s", errmsg);
 	}
 
-
+	
 	Np = N + 1;
-	e = 0;
-	for (i = 0; i < N; i++) {
+
+
+	/*e = 0;
+	for (i = 0; i <= N; i++) {
 		for (j = 1; j < Np; j++) {
-			if (i != j)
+			if (i == 0 && j == N ) {
+				continue;
+			}
+			if (i != j )
 				e++;
 		}
 	}
-	E = e;
+	E = e;*/
 
 	//Define y_ij variables
 	numcols = E;
@@ -205,7 +210,7 @@ EXPORT double solve_TSP(int *sequence, double lambda, double delta, double** M, 
 	// Add node degree constraints (outgoing flow)
 	//N = Np;
 	numrows = N;
-	numnz =  N*(N );
+	numnz =  N*(Np);
 	d_vector(&rhs, numrows, "open_cplex:2");
 	c_vector(&sense, numrows, "open_cplex:3");
 	i_vector(&matbeg, numrows, "open_cplex:4");
@@ -236,7 +241,7 @@ EXPORT double solve_TSP(int *sequence, double lambda, double delta, double** M, 
 
 	// Add node degree constraints (incoming flow)
 	numrows = N;
-	numnz = N*(N );
+	numnz = N*(Np);
 	d_vector(&rhs, numrows, "open_cplex:2");
 	c_vector(&sense, numrows, "open_cplex:3");
 	i_vector(&matbeg, numrows, "open_cplex:4");
@@ -251,7 +256,7 @@ EXPORT double solve_TSP(int *sequence, double lambda, double delta, double** M, 
 		matbeg[index1++] = index;
 		for (e = 0; e < E; e++) {
 			if (index_j[e] == i) {
-				matind[index] = e;
+ 				matind[index] = e;
 				matval[index++] = 1;
 			}
 		}
@@ -279,8 +284,11 @@ EXPORT double solve_TSP(int *sequence, double lambda, double delta, double** M, 
 	index = 0;
 	index1 = 0;
 
-	for (i = 0; i <= N; i++) {
+	for (i = 0; i < N; i++) {
 		for (j = 1; j <= N; j++) {
+			if (i == 0 && j == N) {
+				continue;
+			}
 			if (i != j) {
 				sense[index1] = 'L';
 				rhs[index1] = M[i][j] - (W[i] + C[i][j]);
@@ -365,8 +373,8 @@ EXPORT double solve_TSP(int *sequence, double lambda, double delta, double** M, 
 
 	CPXwriteprob(env,lp,"modelTSP.lp",NULL);                          //write the model in .lp format if needed (to debug)
 
-	CPXsetintparam(env, CPX_PARAM_SCRIND, CPX_OFF); //output display
-	//CPXsetintparam(env, CPX_PARAM_SCRIND, CPX_ON); //output display
+	//CPXsetintparam(env, CPX_PARAM_SCRIND, CPX_OFF); //output display
+	CPXsetintparam(env, CPX_PARAM_SCRIND, CPX_ON); //output display
 	//CPXsetintparam(env,CPX_PARAM_INTSOLLIM,1);    //stops after finding first integer sol.
 	CPXsetintparam(env, CPX_PARAM_MIPDISPLAY, 4); //different levels of output display
 	//CPXsetintparam(env,CPX_PARAM_MIPEMPHASIS,1);//0:balanced; 1:feasibility; 2:optimality,3:bestbound, 4:hiddenfeas
@@ -412,8 +420,8 @@ EXPORT double solve_TSP(int *sequence, double lambda, double delta, double** M, 
 	//CPXgetmipobjval(env, lp, &value);
 	//printf("Upper bound: %.2f   ",value);
 	//best_upper_bound = value;
-	//CPXgetbestobjval(env, lp, &value);  //best lower bound in case the problem was not solved to optimality
-	//best_lower_bound = value;
+	CPXgetbestobjval(env, lp, &value);  //best lower bound in case the problem was not solved to optimality
+	best_lower_bound = value;
 	//printf("Lower bound: %.2f  \n",value);
 
 	//nodecount = CPXgetnodecnt (env, lp);
@@ -423,6 +431,8 @@ EXPORT double solve_TSP(int *sequence, double lambda, double delta, double** M, 
 	d_vector(&x, numcols, "open_cplex:0");
 	CPXgetmipx(env, lp, x, 0, numcols - 1);  // obtain the values of the decision variables
 	
+
+
 	/*for (e = 0; e < E; e++){
 			if (x[e] > 0.01)
 				printf("y[%d][%d]= 1 \n", index_i[e]+1, index_j[e]+1);
