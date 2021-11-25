@@ -114,30 +114,34 @@ EXPORT double solve_TSP(int *sequence, double lambda, double delta, double** M, 
 	d_vector(&lb, numcols, "open_cplex:8");
 	d_vector(&ub, numcols, "open_cplex:9");
 	c_vector(&ctype, numcols, "open_cplex:0");
-
+	colname = (char**)calloc(numcols, sizeof(char*));
+	for (i = 0; i < numcols; i++) {
+		colname[i] = (char*)calloc(255, sizeof(char));
+	}
 	for (i = 0; i < Np; i++) {
 		//pos_w[i] = index1;
 		obj[i] = 0; //get it as argument
 		lb[i] = 0;
 		ub[i] = CPX_INFBOUND;
 		ctype[i] = 'C';
-		//sprintf(colname[e], "y_%d,%d ", index_i[e], index_j[e]);
+		sprintf(colname[i], "w_%d", i);
 	}
-	status = CPXnewcols(env, lp, Np, obj, lb, ub, ctype, NULL);
+	status = CPXnewcols(env, lp, Np, obj, lb, ub, ctype, colname);
 	if (status)
 		fprintf(stderr, "CPXnewcols failed.\n");
 	free(obj);
 	free(lb);
 	free(ub);
-	//free(colname);
+	free(colname);
 	free(ctype);
 
 	//Define E_i variables (service earliness)
-	numcols = N;
-	/*colname = (char**)calloc(numcols, sizeof(char*));
-	for (i = 0; i < numcols; i++){
+	//numcols = N;
+	numcols = Np;
+	colname = (char**)calloc(numcols, sizeof(char*));
+	for (i = 0; i < numcols; i++) {
 		colname[i] = (char*)calloc(255, sizeof(char));
-	}*/
+	}
 	d_vector(&obj, numcols, "open_cplex:1");
 	d_vector(&lb, numcols, "open_cplex:8");
 	d_vector(&ub, numcols, "open_cplex:9");
@@ -149,19 +153,26 @@ EXPORT double solve_TSP(int *sequence, double lambda, double delta, double** M, 
 		lb[i] = 0;
 		ub[i] = CPX_INFBOUND;
 		ctype[i] = 'C';
-		//sprintf(colname[e], "y_%d,%d ", index_i[e], index_j[e]);
+		sprintf(colname[i], "e_%d", i);
 	}
-	status = CPXnewcols(env, lp, N, obj, lb, ub, ctype, NULL);
+	status = CPXnewcols(env, lp, N, obj, lb, ub, ctype, colname);
 	if (status)
 		fprintf(stderr, "CPXnewcols failed.\n");
 	free(obj);
 	free(lb);
 	free(ub);
-	//free(colname);
+	free(colname);
 	free(ctype);
 
 	//Define T_i variables (service tardiness)
-	numcols = N;
+	//numcols = N;
+	numcols = Np;
+
+	colname = (char**)calloc(numcols, sizeof(char*));
+	for (i = 0; i < numcols; i++) {
+		colname[i] = (char*)calloc(255, sizeof(char));
+	}
+
 	/*colname = (char**)calloc(numcols, sizeof(char*));
 	for (i = 0; i < numcols; i++){
 		colname[i] = (char*)calloc(255, sizeof(char));
@@ -177,21 +188,24 @@ EXPORT double solve_TSP(int *sequence, double lambda, double delta, double** M, 
 		lb[i] = 0;
 		ub[i] = CPX_INFBOUND;
 		ctype[i] = 'C';
-		//sprintf(colname[e], "y_%d,%d ", index_i[e], index_j[e]);
+
+		sprintf(colname[i], "t_%d", i);
+
 	}
-	status = CPXnewcols(env, lp, N, obj, lb, ub, ctype, NULL);
+	status = CPXnewcols(env, lp, N, obj, lb, ub, ctype, colname);
 	if (status)
 		fprintf(stderr, "CPXnewcols failed.\n");
 	free(obj);
 	free(lb);
 	free(ub);
-	//free(colname);
+	free(colname);
 	free(ctype);
 
 
 	// Add node degree constraints (outgoing flow)
+	//N = Np;
 	numrows = N;
-	numnz =  N*(N - 1);
+	numnz =  N*(N );
 	d_vector(&rhs, numrows, "open_cplex:2");
 	c_vector(&sense, numrows, "open_cplex:3");
 	i_vector(&matbeg, numrows, "open_cplex:4");
@@ -222,7 +236,7 @@ EXPORT double solve_TSP(int *sequence, double lambda, double delta, double** M, 
 
 	// Add node degree constraints (incoming flow)
 	numrows = N;
-	numnz = N*(N - 1);
+	numnz = N*(N );
 	d_vector(&rhs, numrows, "open_cplex:2");
 	c_vector(&sense, numrows, "open_cplex:3");
 	i_vector(&matbeg, numrows, "open_cplex:4");
@@ -231,7 +245,7 @@ EXPORT double solve_TSP(int *sequence, double lambda, double delta, double** M, 
 
 	index = 0;
 	index1 = 0;
-	for (i = 0; i < N; i++) {
+	for (i = 1; i <= N; i++) {
 		sense[index1] = 'E';
 		rhs[index1] = 1;
 		matbeg[index1++] = index;
@@ -254,8 +268,8 @@ EXPORT double solve_TSP(int *sequence, double lambda, double delta, double** M, 
 
 
 	// Add start service time constraints (w_i + W_i + t_{ij} <= w_j + M_{ij}*(1-y_{ij})
-	numrows = N * N;
-	numnz = N * N * 3;
+	numrows = N *( N);
+	numnz = numrows * 3;
 	d_vector(&rhs, numrows, "open_cplex:2");
 	c_vector(&sense, numrows, "open_cplex:3");
 	i_vector(&matbeg, numrows, "open_cplex:4");
@@ -264,18 +278,22 @@ EXPORT double solve_TSP(int *sequence, double lambda, double delta, double** M, 
 
 	index = 0;
 	index1 = 0;
-	for (i = 0; i < N; i++) {
-		for (j = 1; j < Np; j++) {
-			sense[index1] = 'L';
-			//rhs[index1] = M[i][j] - (W[i] + time[i][j]);
-			matbeg[index1++] = index;
-			matind[index] = E + i;  //add w_i variable
-			//matind[index] = pos_w[i];
-			matval[index++] = 1;
-			matind[index] = E + j; //add w_j variable
-			matval[index++] = -1;
-			matind[index] = index_e[i][j]; //add y_{ij} variable
-			matval[index++] = M[i][j];
+
+	for (i = 0; i <= N; i++) {
+		for (j = 1; j <= N; j++) {
+			if (i != j) {
+				sense[index1] = 'L';
+				rhs[index1] = M[i][j] - (W[i] + C[i][j]);
+				matbeg[index1++] = index;
+				matind[index] = E + i;  //add w_i variable
+				//matind[index] = pos_w[i];
+				matval[index++] = 1;
+				matind[index] = E + j; //add w_j variable
+				matval[index++] = -1;
+				matind[index] = index_e[i][j]; //add y_{ij} variable
+				matval[index++] = M[i][j];
+			}
+			
 		}
 	}
 	status = CPXaddrows(env, lp, 0, index1, index, rhs, sense, matbeg, matind, matval, NULL, NULL);
@@ -345,7 +363,7 @@ EXPORT double solve_TSP(int *sequence, double lambda, double delta, double** M, 
 	free(sense);
 	free(rhs);
 
-	//CPXwriteprob(env,lp,"modelTSP.lp",NULL);                          //write the model in .lp format if needed (to debug)
+	CPXwriteprob(env,lp,"modelTSP.lp",NULL);                          //write the model in .lp format if needed (to debug)
 
 	CPXsetintparam(env, CPX_PARAM_SCRIND, CPX_OFF); //output display
 	//CPXsetintparam(env, CPX_PARAM_SCRIND, CPX_ON); //output display
