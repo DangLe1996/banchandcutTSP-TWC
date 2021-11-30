@@ -24,10 +24,10 @@
     <ClCompile Include="Score.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="solve_Clustered_ATSP_model.c">
+    <ClCompile Include="solve_Clustered_ATSP_TWC_model.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="solve_MIP_model.c">
+    <ClCompile Include="solve_MIP_TSP_model.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

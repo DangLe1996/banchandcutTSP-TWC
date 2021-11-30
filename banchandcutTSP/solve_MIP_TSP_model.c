@@ -1,6 +1,6 @@
 #include "headers.h"
 
-EXPORT double solve_TSP(int *sequence, double lambda, double delta, double** M, double* W,
+EXPORT double solve_TSP_TWC(int *sequence, double lambda, double delta, double** M, double* W,
 	double* earliest, double* latest)
 {
 	int i,j, e, t;
@@ -417,42 +417,49 @@ EXPORT double solve_TSP(int *sequence, double lambda, double delta, double** M, 
 	if (status) fprintf(stderr, "Failed to optimize LP.\n");
 
 	//// retrive solution values
-	//CPXgetmipobjval(env, lp, &value);
-	//printf("Upper bound: %.2f   ",value);
+	CPXgetmipobjval(env, lp, &value);
+	printf("Upper bound: %.2f   ",value);
 	//best_upper_bound = value;
 	CPXgetbestobjval(env, lp, &value);  //best lower bound in case the problem was not solved to optimality
 	best_lower_bound = value;
-	//printf("Lower bound: %.2f  \n",value);
+	printf("Lower bound: %.2f  \n",value);
 
-	//nodecount = CPXgetnodecnt (env, lp);
-	//printf("Number of BB nodes : %ld  \n",nodecount);
+	nodecount = CPXgetnodecnt (env, lp);
+	printf("Number of BB nodes : %ld  \n",nodecount);
 
 	numcols = CPXgetnumcols(env, lp);
 	d_vector(&x, numcols, "open_cplex:0");
 	CPXgetmipx(env, lp, x, 0, numcols - 1);  // obtain the values of the decision variables
 	
 
-
-	/*for (e = 0; e < E; e++){
-			if (x[e] > 0.01)
-				printf("y[%d][%d]= 1 \n", index_i[e]+1, index_j[e]+1);
-	}*/
-	for (i = 0; i < N; i++)
+	value = 0;
+	for (e = 0; e < E; e++){
+		if (x[e] > 0.01) {
+			printf("y[%d][%d]= 1 \n", index_i[e] + 1, index_j[e] + 1);
+			value += C[index_i[e]][index_j[e]];
+		}
+	}
+	for (i = 0; i < N; i++) {
+		if (x[E+Np+i] > 0.001 || x[E + Np + N + i] > 0.001) {
+			printf("E[%d]= %.2f, T[%d]= %.2f \n", i + 1, x[E + Np + i],  i + 1, x[E + Np + N + i]);
+		}
+	}
+	for (i = 0; i < Np; i++)
 		sequence[i] = -1;
 	t = 0;
 	sequence[t++] = 0;
-	while (t < N) {
-		for (j = 0; j < N; j++) {
+	while (t < Np) {
+		for (j = 1; j < Np; j++) {
 			if (x[index_e[sequence[t - 1]][j]]  > 0.01) {
 				sequence[t++] = j;
 				break;
 			}
 		}
 	}
-	/*printf("Optimal ATSP sequence: ");
-	for (i = 0; i < N; i++)
+	printf("Value: %.2f \n Optimal ATSP sequence: ", value);
+	for (i = 0; i < Np; i++)
 		printf("%d ", sequence[i]+1);
-	printf("\n");*/
+	printf("\n");
 
 	// TERMINATE:
 

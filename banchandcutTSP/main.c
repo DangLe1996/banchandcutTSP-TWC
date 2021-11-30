@@ -5,8 +5,6 @@
 
 
 
-
-
 void initialize_Instance_Amazon_New_Numpy(double* travelCost, int n_stops) {
 
 	int i, j, e;
@@ -17,6 +15,7 @@ void initialize_Instance_Amazon_New_Numpy(double* travelCost, int n_stops) {
 	for (i = 0; i < N; i++) {
 		for (j = 0; j < N; j++) {
 			C[i][j] = travelCost[N * i + j];
+			index_e[i][j] = 0;
 		}
 	}
 	for (i = 0; i < N; i++)
@@ -113,8 +112,8 @@ int main() {
 
 	for (int i = 0; i < N; i++) {
 		
-			E_i[i] = TWC_data[i *3]*60.0;
-			L_i[i] = TWC_data[i*3 + 1]*60.0;
+			E_i[i] = TWC_data[i *3]*3600.0;
+			L_i[i] = TWC_data[i*3 + 1]*3600.0;
 			w_i[i] = TWC_data[i*3 + 2];
 		
 	}
@@ -138,7 +137,7 @@ int main() {
 	printf("travel cost is %f",travelCost[1][2]);
 	printf("N is %d", n_stops);*/
 
-	N = 10;
+	//N = 15;
 
 
 	initialize_Instance_Amazon_New_Numpy(travelCost, N);
@@ -152,14 +151,14 @@ int main() {
 		}
 	}
 
-	double lambda = 0.5;
-	double delta = 0.5;
+	double lambda = 1000;
+	double delta = 1000;
 
 
 	N -= 1;
 
 
-	opt_value = solve_TSP(sequence,lambda,delta,M,w_i,E_i,L_i);
+	opt_value = solve_TSP_TWC(sequence,lambda,delta,M,w_i,E_i,L_i);
 	//printf("Optimal travel time is :  %f \n", opt_value);
 	end = clock();
 	//cputime = (double)(end - start) / (double)CLOCKS_PER_SEC;   //Compute CPU time

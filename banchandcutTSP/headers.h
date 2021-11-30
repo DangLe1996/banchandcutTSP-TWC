@@ -102,7 +102,7 @@ double exact_separation_SEC(int, double *);
 static void free_and_null(char **);
 static int CPXPUBLIC mycutcallback(CPXCENVptr, void *, int, void *, int *);
 //EXPORT double solve_TSP(int* sequence);
-EXPORT double solve_TSP(int* sequence, double lambda, double delta, double** M, 
+EXPORT double solve_TSP_TWC(int* sequence, double lambda, double delta, double** M, 
 	double* W, double* earliest, double* latest);
 FILE	*open_file(const char *filename, const char *mode);
 void read_INSTANCE(const char *);
@@ -124,6 +124,6 @@ void d_vector(double **vector, int n, char *s);
 void c_vector(char **vector, int n, char *s);
 void Initialize_memory(void);
 void free_memory(void);
-static int CPXPUBLIC mycutcallback(CPXCENVptr, void *, int, void *, int *);
-static int CPXPUBLIC mycutcallbackATSP(CPXCENVptr, void *, int, void *, int *);
+static int CPXPUBLIC mycutcallbackATSPTWC(CPXCENVptr, void *, int, void *, int *);
+
 ///////////////////////////////////////////////////////////////////////////////
