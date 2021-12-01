@@ -73,6 +73,7 @@ typedef struct SCUTS {
 
 int		N, Np, E;
 double	**C;
+double **T;
 //double  **time;
 //int     *cut_set;
 int		*index_i;

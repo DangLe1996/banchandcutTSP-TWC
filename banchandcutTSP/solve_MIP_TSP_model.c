@@ -291,7 +291,7 @@ EXPORT double solve_TSP_TWC(int *sequence, double lambda, double delta, double**
 			}
 			if (i != j) {
 				sense[index1] = 'L';
-				rhs[index1] = M[i][j] - (W[i] + C[i][j]);
+				rhs[index1] = M[i][j] - (W[i] + T[i][j]);
 				matbeg[index1++] = index;
 				matind[index] = E + i;  //add w_i variable
 				//matind[index] = pos_w[i];
@@ -377,8 +377,8 @@ EXPORT double solve_TSP_TWC(int *sequence, double lambda, double delta, double**
 	CPXsetintparam(env, CPX_PARAM_SCRIND, CPX_ON); //output display
 	//CPXsetintparam(env,CPX_PARAM_INTSOLLIM,1);    //stops after finding first integer sol.
 	CPXsetintparam(env, CPX_PARAM_MIPDISPLAY, 4); //different levels of output display
-	//CPXsetintparam(env,CPX_PARAM_MIPEMPHASIS,1);//0:balanced; 1:feasibility; 2:optimality,3:bestbound, 4:hiddenfeas
-	//CPXsetdblparam(env, CPX_PARAM_TILIM, 60); // time limit
+	CPXsetintparam(env,CPX_PARAM_MIPEMPHASIS,0);//0:balanced; 1:feasibility; 2:optimality,3:bestbound, 4:hiddenfeas
+	CPXsetdblparam(env, CPX_PARAM_TILIM, 20); // time limit
 	//CPXsetdblparam(env,CPX_PARAM_TRELIM, 14000); // B&B memory limit
 	CPXsetdblparam(env,CPX_PARAM_EPGAP, 0.001); // e-optimal solution (%gap)
 	//CPXsetdblparam(env,CPX_PARAM_EPAGAP, 0.0000000001); // e-optimal solution (absolute value)
@@ -386,7 +386,8 @@ EXPORT double solve_TSP_TWC(int *sequence, double lambda, double delta, double**
 	//CPXsetintparam(env,CPX_PARAM_THREADS, 1); // Number of threads to use
 	//CPXsetdblparam(env,CPX_PARAM_EPRHS, 0.0000001);
 	//CPXsetintparam(env,CPX_PARAM_REDUCE, 0);  // only needed when adding lazy constraints
-	//CPXsetintparam(env,CPX_PARAM_HEURFREQ, -1); //heuristic frequency and intensisty 
+	CPXsetintparam(env,CPX_PARAM_HEURFREQ, 5); //heuristic frequency and intensisty 
+	CPXsetintparam(env, CPXPARAM_MIP_Strategy_RINSHeur, 5);
 	//CPXsetdblparam(env,CPX_PARAM_CUTSFACTOR, 1.0);  //limit the number of cuts added by cplex 1.0002
 	//CPXsetdblparam(env,CPX_PARAM_CUTUP,UpperBound+.01); // provide an initial upper bound
 	CPXsetintparam(env, CPX_PARAM_MIPEMPHASIS, CPX_MIPEMPHASIS_OPTIMALITY);  // MIP emphasis: optimality, feasibility, moving best bound

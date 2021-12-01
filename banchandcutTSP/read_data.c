@@ -145,6 +145,7 @@ void Initialize_memory(void)
 	int i;
 
 	C = create_double_matrix(N, N);
+	T = create_double_matrix(N, N);
 	index_i = create_int_vector(E);
 	index_j = create_int_vector(E);
 	index_e = create_int_matrix(N, N);
