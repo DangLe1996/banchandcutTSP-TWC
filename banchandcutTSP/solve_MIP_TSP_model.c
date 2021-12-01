@@ -378,7 +378,7 @@ EXPORT double solve_TSP_TWC(int *sequence, double lambda, double delta, double**
 	//CPXsetintparam(env,CPX_PARAM_INTSOLLIM,1);    //stops after finding first integer sol.
 	CPXsetintparam(env, CPX_PARAM_MIPDISPLAY, 4); //different levels of output display
 	CPXsetintparam(env,CPX_PARAM_MIPEMPHASIS,0);//0:balanced; 1:feasibility; 2:optimality,3:bestbound, 4:hiddenfeas
-	CPXsetdblparam(env, CPX_PARAM_TILIM, 20); // time limit
+	CPXsetdblparam(env, CPX_PARAM_TILIM, 10); // time limit
 	//CPXsetdblparam(env,CPX_PARAM_TRELIM, 14000); // B&B memory limit
 	CPXsetdblparam(env,CPX_PARAM_EPGAP, 0.001); // e-optimal solution (%gap)
 	//CPXsetdblparam(env,CPX_PARAM_EPAGAP, 0.0000000001); // e-optimal solution (absolute value)
