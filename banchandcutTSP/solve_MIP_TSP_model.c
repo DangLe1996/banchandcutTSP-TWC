@@ -311,8 +311,6 @@ EXPORT double solve_TSP_TWC(int* sequence, double lambda, double delta, double**
 
 
 
-
-
 	// Add start service time constraints (w_i + W_i + t_{ij} <= w_j + M_{ij}*(1-y_{ij})
 	numrows = N * (N);
 	numnz = numrows * 3;
@@ -411,7 +409,7 @@ EXPORT double solve_TSP_TWC(int* sequence, double lambda, double delta, double**
 	free(matval);
 	free(sense);
 	free(rhs);
-	//CPXwriteprob(env, lp, "modelTSP.lp", NULL);                          //write the model in .lp format if needed (to debug)
+	CPXwriteprob(env, lp, "modelTSP.lp", NULL);                          //write the model in .lp format if needed (to debug)
 
 	//CPXsetintparam(env, CPX_PARAM_SCRIND, CPX_OFF); //output display
 	CPXsetintparam(env, CPXPARAM_RandomSeed, 10); //random seed
