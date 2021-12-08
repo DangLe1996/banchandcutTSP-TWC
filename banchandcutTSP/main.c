@@ -176,7 +176,7 @@ int main() {
 
 }
 
-EXPORT void solveATSPNumpy(int* sequence, double* weightedCost, int n_stops, double* TWC_data
+ void solveATSPNumpy(int* sequence, double* weightedCost, int n_stops, double* TWC_data
 	, double* travelCost, double lambda, double delta) {
 	printf("inside ivan code");
 	clock_t  start, end;

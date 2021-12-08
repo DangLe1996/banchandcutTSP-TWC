@@ -26,7 +26,7 @@ void freeDoubleMatrix(double** matrix, int DIMENSION) {
 }
 
 
-EXPORT double getScore(double** weightMatrix, int* actual, int* sub, int DIMENSION) {
+ double getScore(double** weightMatrix, int* actual, int* sub, int DIMENSION) {
 
 
 
