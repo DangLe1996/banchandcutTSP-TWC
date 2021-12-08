@@ -126,5 +126,6 @@ void c_vector(char **vector, int n, char *s);
 void Initialize_memory(void);
 void free_memory(void);
 static int CPXPUBLIC mycutcallbackATSPTWC(CPXCENVptr, void *, int, void *, int *);
-
+EXPORT void solveATSPNumpy(int* sequence, double* weightedCost, int n_stops, double* TWC_data
+	, double* travelCost, double lambda, double delta);
 ///////////////////////////////////////////////////////////////////////////////
