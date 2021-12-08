@@ -1,7 +1,7 @@
 #include "headers.h"
 // #include "Score.h"
 
-EXPORT double solve_Clustered_TWC_ATSP(int depot, int dim_N, int dim_Z, double **c, int *zone_dim, int *list_all_stops, int *final_sequence, double lambda, double delta, double **M, double *W, double *earliest, double *latest)
+ double solve_Clustered_TWC_ATSP(int depot, int dim_N, int dim_Z, double **c, int *zone_dim, int *list_all_stops, int *final_sequence, double lambda, double delta, double **M, double *W, double *earliest, double *latest)
 {
 	int i,j, e, t, z, zp, Z, count_stops;
 	int index, index1;  // auxiliar indices to fill in the constraint matrix

@@ -4,8 +4,8 @@
 #include <assert.h>
 #include <math.h>
 #include <time.h>
-#include "ilcplex/cplex.h"
-//#include "cplex.h"
+// #include "ilcplex/cplex.h"
+#include "cplex.h"
 
 //Export 
 #define EXPORT __declspec(dllexport)
@@ -103,7 +103,7 @@ double exact_separation_SEC(int, double *);
 static void free_and_null(char **);
 static int CPXPUBLIC mycutcallback(CPXCENVptr, void *, int, void *, int *);
 //EXPORT double solve_TSP(int* sequence);
-EXPORT double solve_TSP_TWC(int* sequence, double lambda, double delta, double** M, 
+ double solve_TSP_TWC(int* sequence, double lambda, double delta, double** M, 
 	double* W, double* earliest, double* latest);
 FILE	*open_file(const char *filename, const char *mode);
 void read_INSTANCE(const char *);
@@ -126,6 +126,6 @@ void c_vector(char **vector, int n, char *s);
 void Initialize_memory(void);
 void free_memory(void);
 static int CPXPUBLIC mycutcallbackATSPTWC(CPXCENVptr, void *, int, void *, int *);
-EXPORT void solveATSPNumpy(int* sequence, double* weightedCost, int n_stops, double* TWC_data
+ void solveATSPNumpy(int* sequence, double* weightedCost, int n_stops, double* TWC_data
 	, double* travelCost, double lambda, double delta);
 ///////////////////////////////////////////////////////////////////////////////
