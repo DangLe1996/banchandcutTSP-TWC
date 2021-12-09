@@ -176,7 +176,7 @@ int main() {
 
 }
 
- void solveATSPNumpy(int* sequence, double* weightedCost, int n_stops, double* TWC_data
+EXPORT void solveATSPNumpy(int* sequence, double* weightedCost, int n_stops, double* TWC_data
 	, double* travelCost, double lambda, double delta) {
 	printf("lambda is %f", lambda);
 	printf("delta is %f", delta);
