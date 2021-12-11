@@ -5,6 +5,10 @@
 
 
 
+
+
+
+
 void initialize_Instance_Amazon_New_Numpy(double* weightedCost, double* travelCost, int n_stops) {
 
 	int i, j, e;
@@ -43,6 +47,70 @@ void initialize_Instance_Amazon_New_Numpy(double* weightedCost, double* travelCo
 	//assert(e == E);
 
 }
+
+EXPORT void solveATSPNumpy(int* sequence, double* weightedCost, int n_stops, double* TWC_data
+	, double* travelCost, double lambda, double delta) {
+	printf("lambda is %f", lambda);
+	printf("delta is %f", delta);
+	printf("inside ivan code");
+	clock_t  start, end;
+	double opt_value;
+	double cputime;
+	n_conn_comp = 0;
+	N = n_stops;
+	printf("N value is %i", n_stops);
+	old_objval = 0;
+	count_same_node = 0;
+	n_int_feas_subproblems = 0;
+	n_frac_feas_subproblems = 0;
+	n_feas_subproblems = 0;
+
+	double* E_i = malloc(sizeof(double) * N);
+	double* L_i = malloc(sizeof(double) * N);
+	double* w_i = malloc(sizeof(double) * N);
+	for (int i = 0; i < N; i++) {
+
+		E_i[i] = TWC_data[i * 3] * 3600.0;
+		L_i[i] = TWC_data[i * 3 + 1] * 3600.0;
+		w_i[i] = TWC_data[i * 3 + 2];
+
+	}
+
+	initialize_Instance_Amazon_New_Numpy(weightedCost, travelCost, N);
+
+
+
+
+
+	////start = clock();
+	/*printf("Solving TSP with B&C algorithm: \n");*/
+
+	double** M = create_double_matrix(N, N);
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			M[i][j] = 50000;
+		}
+	}
+
+	/*double lambda = 1000;
+	double delta = 1000;*/
+
+
+	N -= 1;
+
+
+	opt_value = solve_TSP_TWC(sequence, lambda, delta, M, w_i, E_i, L_i);
+	//printf("Optimal travel time is :  %f \n", opt_value);
+	end = clock();
+	//cputime = (double)(end - start) / (double)CLOCKS_PER_SEC;   //Compute CPU time
+
+	free_memory();
+	//free(travelCost);
+	//freeDoubleMatrix(travelCost, n_stops);
+
+}
+
+
 
 const char* getfield(char* line, double* input, int pos)
 {
@@ -176,65 +244,4 @@ int main() {
 
 }
 
- void solveATSPNumpy(int* sequence, double* weightedCost, int n_stops, double* TWC_data
-	, double* travelCost, double lambda, double delta) {
-	printf("lambda is %f", lambda);
-	printf("delta is %f", delta);
-	printf("inside ivan code");
-	clock_t  start, end;
-	double opt_value;
-	double cputime;
-	n_conn_comp = 0;
-	N = n_stops;
-	printf("N value is %i", n_stops);
-	old_objval = 0;
-	count_same_node = 0;
-	n_int_feas_subproblems = 0;
-	n_frac_feas_subproblems = 0;
-	n_feas_subproblems = 0;
-
-	double* E_i = malloc(sizeof(double) * N);
-	double* L_i = malloc(sizeof(double) * N);
-	double* w_i = malloc(sizeof(double) * N);
-	for (int i = 0; i < N; i++) {
-
-		E_i[i] = TWC_data[i * 3] * 3600.0;
-		L_i[i] = TWC_data[i * 3 + 1] * 3600.0;
-		w_i[i] = TWC_data[i * 3 + 2];
-
-	}
-
-	initialize_Instance_Amazon_New_Numpy(weightedCost, travelCost, N);
-
-
-
-
-
-	////start = clock();
-	/*printf("Solving TSP with B&C algorithm: \n");*/
-
-	double** M = create_double_matrix(N, N);
-	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < N; j++) {
-			M[i][j] = 50000;
-		}
-	}
-
-	/*double lambda = 1000;
-	double delta = 1000;*/
-
-
-	N -= 1;
-
-
-	opt_value = solve_TSP_TWC(sequence, lambda, delta, M, w_i, E_i, L_i);
-	//printf("Optimal travel time is :  %f \n", opt_value);
-	end = clock();
-	//cputime = (double)(end - start) / (double)CLOCKS_PER_SEC;   //Compute CPU time
-
-	free_memory();
-	//free(travelCost);
-	//freeDoubleMatrix(travelCost, n_stops);
-
-}
-
+ 

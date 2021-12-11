@@ -4,8 +4,8 @@
 #include <assert.h>
 #include <math.h>
 #include <time.h>
- // #include "ilcplex/cplex.h"
-#include "cplex.h"
+  #include "ilcplex/cplex.h"
+//#include "cplex.h"
 
 //Export 
 #define EXPORT __declspec(dllexport)
@@ -126,6 +126,6 @@ void c_vector(char **vector, int n, char *s);
 void Initialize_memory(void);
 void free_memory(void);
 static int CPXPUBLIC mycutcallbackATSPTWC(CPXCENVptr, void *, int, void *, int *);
- void solveATSPNumpy(int* sequence, double* weightedCost, int n_stops, double* TWC_data
-	, double* travelCost, double lambda, double delta);
+ /*void solveATSPNumpy(int* sequence, double* weightedCost, int n_stops, double* TWC_data
+	, double* travelCost, double lambda, double delta);*/
 ///////////////////////////////////////////////////////////////////////////////

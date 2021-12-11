@@ -1,6 +1,6 @@
 #include "headers.h"
 
- double solve_TSP_TWC(int *sequence, double lambda, double delta, double** M, double* W,
+  double solve_TSP_TWC(int *sequence, double lambda, double delta, double** M, double* W,
 	double* earliest, double* latest)
 {
 	int i,j, e, t;
