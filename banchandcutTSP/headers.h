@@ -103,7 +103,7 @@ double exact_separation_SEC(int, double *);
 static void free_and_null(char **);
 static int CPXPUBLIC mycutcallback(CPXCENVptr, void *, int, void *, int *);
 //EXPORT double solve_TSP(int* sequence);
- double solve_TSP_TWC(int* sequence, double lambda, double delta, double** M, 
+EXPORT double solve_TSP_TWC(int* sequence, double lambda, double delta, double** M,
 	double* W, double* earliest, double* latest);
 FILE	*open_file(const char *filename, const char *mode);
 void read_INSTANCE(const char *);
