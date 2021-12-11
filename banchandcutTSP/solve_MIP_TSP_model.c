@@ -1,9 +1,9 @@
 #include "headers.h"
 
- double solve_TSP_TWC(int* sequence, double lambda, double delta, double** M, double* W,
+EXPORT double solve_TSP_TWC(int *sequence, double lambda, double delta, double** M, double* W,
 	double* earliest, double* latest)
 {
-	int i, j, e, t;
+	int i,j, e, t;
 	int index, index1;  // auxiliar indices to fill in the constraint matrix
 	double best_upper_bound, best_lower_bound;
 	int nodecount;
@@ -14,21 +14,21 @@
 	int       numrows; // number of constraints.........................................
 	int       numnz;   // number of non-zero elements in the matrix ....................
 	int       objsen;  // optimization sense (min:1, max:-1 ) ..........................
-	double* obj;    // objective function coefficients ..............................
-	double* rhs;    // right and side of constraints ................................
-	char* sense;  // constraints sense (<=: 'L', =:'E', >=:'G') ...................
-	int* matbeg; // index of first non-zero element in each row...................
-	int* matind; // associated column of each non-zelo element ...................
-	double* matval; // coefficient values fo the non-zero elements of constraints....
-	double* lb;     // lower bounds of variables.....................................
-	double* ub;     // upper bounds of variables.....................................
+	double    *obj;    // objective function coefficients ..............................
+	double    *rhs;    // right and side of constraints ................................
+	char      *sense;  // constraints sense (<=: 'L', =:'E', >=:'G') ...................
+	int       *matbeg; // index of first non-zero element in each row...................
+	int       *matind; // associated column of each non-zelo element ...................
+	double    *matval; // coefficient values fo the non-zero elements of constraints....
+	double    *lb;     // lower bounds of variables.....................................
+	double    *ub;     // upper bounds of variables.....................................
 	int       status;  // optimization status......................... .................
-	double* x;      // solution vector (double, even if the problem is integer) .....
+	double    *x;      // solution vector (double, even if the problem is integer) .....
 	char probname[16]; // problem name for cplex .......................................
-	char* ctype;  // variable type ('C', 'I', 'B') only if integer.................
+	char      *ctype;  // variable type ('C', 'I', 'B') only if integer.................
 	double    value;   // objevtive value of solution ..................................
 	//int       *pos_y;
-	char** colname;
+	char	  **colname;
 	int cur_numcols;
 	CUTINFO cutinfo;
 	cutinfo.x = NULL;
@@ -62,7 +62,7 @@
 		printf("%s", errmsg);
 	}
 
-
+	
 	Np = N + 1;
 
 
@@ -81,7 +81,7 @@
 	//Define y_ij variables
 	numcols = E;
 	colname = (char**)calloc(numcols, sizeof(char*));
-	for (i = 0; i < numcols; i++) {
+	for (i = 0; i < numcols; i++){
 		colname[i] = (char*)calloc(255, sizeof(char));
 	}
 	d_vector(&obj, numcols, "open_cplex:1");
@@ -89,7 +89,7 @@
 	d_vector(&ub, numcols, "open_cplex:9");
 	c_vector(&ctype, numcols, "open_cplex:0");
 
-	for (e = 0; e < E; e++) {
+	for (e = 0; e<E; e++){
 		//pos_y[e] = index1;
 		obj[e] = C[index_i[e]][index_j[e]];
 		lb[e] = 0;
@@ -210,7 +210,7 @@
 	// Add node degree constraints (outgoing flow)
 	//N = Np;
 	numrows = N;
-	numnz = N * (Np);
+	numnz =  N*(Np);
 	d_vector(&rhs, numrows, "open_cplex:2");
 	c_vector(&sense, numrows, "open_cplex:3");
 	i_vector(&matbeg, numrows, "open_cplex:4");
@@ -219,12 +219,12 @@
 
 	index = 0;
 	index1 = 0;
-	for (i = 0; i < N; i++) {
+	for (i = 0; i < N; i++){
 		sense[index1] = 'E';
 		rhs[index1] = 1;
 		matbeg[index1++] = index;
-		for (e = 0; e < E; e++) {
-			if (index_i[e] == i) {
+		for (e = 0; e < E; e++){
+			if (index_i[e] == i){
 				matind[index] = e;
 				matval[index++] = 1;
 			}
@@ -241,7 +241,7 @@
 
 	// Add node degree constraints (incoming flow)
 	numrows = N;
-	numnz = N * (Np);
+	numnz = N*(Np);
 	d_vector(&rhs, numrows, "open_cplex:2");
 	c_vector(&sense, numrows, "open_cplex:3");
 	i_vector(&matbeg, numrows, "open_cplex:4");
@@ -256,7 +256,7 @@
 		matbeg[index1++] = index;
 		for (e = 0; e < E; e++) {
 			if (index_j[e] == i) {
-				matind[index] = e;
+ 				matind[index] = e;
 				matval[index++] = 1;
 			}
 		}
@@ -311,8 +311,10 @@
 
 
 
+
+
 	// Add start service time constraints (w_i + W_i + t_{ij} <= w_j + M_{ij}*(1-y_{ij})
-	numrows = N * (N);
+	numrows = N *( N);
 	numnz = numrows * 3;
 	d_vector(&rhs, numrows, "open_cplex:2");
 	c_vector(&sense, numrows, "open_cplex:3");
@@ -340,7 +342,7 @@
 				matind[index] = index_e[i][j]; //add y_{ij} variable
 				matval[index++] = M[i][j];
 			}
-
+			
 		}
 	}
 	status = CPXaddrows(env, lp, 0, index1, index, rhs, sense, matbeg, matind, matval, NULL, NULL);
@@ -409,7 +411,7 @@
 	free(matval);
 	free(sense);
 	free(rhs);
-	CPXwriteprob(env, lp, "modelTSP.lp", NULL);                          //write the model in .lp format if needed (to debug)
+	//CPXwriteprob(env, lp, "modelTSP.lp", NULL);                          //write the model in .lp format if needed (to debug)
 
 	//CPXsetintparam(env, CPX_PARAM_SCRIND, CPX_OFF); //output display
 	CPXsetintparam(env, CPXPARAM_RandomSeed, 10); //random seed
@@ -418,13 +420,13 @@
    //CPXsetintparam(env,CPX_PARAM_INTSOLLIM,1);    //stops after finding first integer sol.
 	CPXsetintparam(env, CPX_PARAM_MIPDISPLAY, 4); //different levels of output display
 	// CPXsetintparam(env,CPX_PARAM_MIPEMPHASIS,0);//0:balanced; 1:feasibility; 2:optimality,3:bestbound, 4:hiddenfeas
-	CPXsetdblparam(env, CPXPARAM_TimeLimit, 15); // time limit
+	//CPXsetdblparam(env, CPXPARAM_TimeLimit, 15); // time limit
 	//CPXsetdblparam(env, CPXPARAM_DetTimeLimit, 150); // time limit
 	//CPXsetdblparam(env,CPX_PARAM_TRELIM, 14000); // B&B memory limit
 	CPXsetdblparam(env, CPX_PARAM_EPGAP, 0.00001); // e-optimal solution (%gap)
 	//CPXsetdblparam(env,CPX_PARAM_EPAGAP, 0.0000000001); // e-optimal solution (absolute value)
 	//CPXsetdblparam(env,CPX_PARAM_EPINT, 0.0000000001); // integer precision
-	CPXsetintparam(env, CPX_PARAM_THREADS, 1); // Number of threads to use
+	CPXsetintparam(env,CPX_PARAM_THREADS, 1); // Number of threads to use
 	//CPXsetdblparam(env,CPX_PARAM_EPRHS, 0.0000001);
 	//CPXsetintparam(env,CPX_PARAM_REDUCE, 0);  // only needed when adding lazy constraints
 	CPXsetintparam(env, CPX_PARAM_HEURFREQ, 10); //heuristic frequency and intensisty 
@@ -452,9 +454,9 @@
 	cutinfo.lp = lp;
 	cutinfo.numcols = cur_numcols;
 	//printf("Columns loaded in Cplex: %d \n", cur_numcols);
-	cutinfo.x = (double*)malloc(cur_numcols * sizeof(double));
+	cutinfo.x = (double *)malloc(cur_numcols * sizeof (double));
 	/* Set up to use MIP callback */
-	//status = CPXsetusercutcallbackfunc(env, mycutcallback, &cutinfo);
+	status = CPXsetusercutcallbackfunc(env, mycutcallback, &cutinfo);
 	//status = CPXsetlazyconstraintcallbackfunc(env, mycutcallback, &cutinfo);
 
 	status = CPXmipopt(env, lp);  //solve the integer program
@@ -462,22 +464,22 @@
 
 	//// retrive solution values
 	CPXgetmipobjval(env, lp, &value);
-	printf("Upper bound: %.2f   ", value);
+	printf("Upper bound: %.2f   ",value);
 	//best_upper_bound = value;
 	CPXgetbestobjval(env, lp, &value);  //best lower bound in case the problem was not solved to optimality
 	best_lower_bound = value;
-	printf("Lower bound: %.2f  \n", value);
+	printf("Lower bound: %.2f  \n",value);
 
-	nodecount = CPXgetnodecnt(env, lp);
-	printf("Number of BB nodes : %ld  \n", nodecount);
+	nodecount = CPXgetnodecnt (env, lp);
+	printf("Number of BB nodes : %ld  \n",nodecount);
 
 	numcols = CPXgetnumcols(env, lp);
 	d_vector(&x, numcols, "open_cplex:0");
 	CPXgetmipx(env, lp, x, 0, numcols - 1);  // obtain the values of the decision variables
-
+	
 
 	value = 0;
-	for (e = 0; e < E; e++) {
+	for (e = 0; e < E; e++){
 		if (x[e] > 0.01) {
 			printf("y[%d][%d]= 1, w[%d] = %.2f \n", index_i[e], index_j[e], index_i[e], x[E + index_i[e]]);
 			value += C[index_i[e]][index_j[e]];
@@ -485,8 +487,8 @@
 		}
 	}
 	for (i = 0; i < N; i++) {
-		if (x[E + Np + i] > 0.001 || x[E + Np + N + i] > 0.001) {
-			printf("E[%d]= %.2f, T[%d]= %.2f \n", i + 1, x[E + Np + i], i + 1, x[E + Np + N + i]);
+		if (x[E+Np+i] > 0.001 || x[E + Np + N + i] > 0.001) {
+			printf("E[%d]= %.2f, T[%d]= %.2f \n", i + 1, x[E + Np + i],  i + 1, x[E + Np + N + i]);
 		}
 	}
 	for (i = 0; i < Np; i++)
@@ -495,7 +497,7 @@
 	sequence[t++] = 0;
 	while (t < Np) {
 		for (j = 1; j < Np; j++) {
-			if (x[index_e[sequence[t - 1]][j]] > 0.01) {
+			if (x[index_e[sequence[t - 1]][j]]  > 0.01) {
 				sequence[t++] = j;
 				break;
 			}
@@ -503,7 +505,7 @@
 	}
 	printf("Value: %.2f \n Optimal ATSP sequence: ", value);
 	for (i = 0; i < Np; i++)
-		printf("%d ", sequence[i] + 1);
+		printf("%d ", sequence[i]+1);
 	printf("\n");
 
 	// TERMINATE:
@@ -525,11 +527,11 @@
 	}
 
 	free(x);
-	free_and_null((char**)&cutinfo.x);
-	free_and_null((char**)&cutinfo.beg);
-	free_and_null((char**)&cutinfo.ind);
-	free_and_null((char**)&cutinfo.val);
-	free_and_null((char**)&cutinfo.rhs);
+	free_and_null((char **)&cutinfo.x);
+	free_and_null((char **)&cutinfo.beg);
+	free_and_null((char **)&cutinfo.ind);
+	free_and_null((char **)&cutinfo.val);
+	free_and_null((char **)&cutinfo.rhs);
 
 
 	return best_lower_bound;
@@ -539,10 +541,10 @@
 
 static int CPXPUBLIC
 mycutcallback(CPXCENVptr env,
-	void* cbdata,
-	int        wherefrom,
-	void* cbhandle,
-	int* useraction_p)
+void       *cbdata,
+int        wherefrom,
+void       *cbhandle,
+int        *useraction_p)
 {
 	int status = 0;
 
@@ -551,14 +553,14 @@ mycutcallback(CPXCENVptr env,
 
 	int      numcols = cutinfo->numcols;
 	int      numcuts = cutinfo->num;
-	double* x = cutinfo->x;
-	int* beg = cutinfo->beg;
-	int* ind = cutinfo->ind;
-	double* val = cutinfo->val;
-	double* rhs = cutinfo->rhs;
-	int* cutind = NULL;
-	double* cutval = NULL;
-	int* feas = NULL;
+	double   *x = cutinfo->x;
+	int      *beg = cutinfo->beg;
+	int      *ind = cutinfo->ind;
+	double   *val = cutinfo->val;
+	double   *rhs = cutinfo->rhs;
+	int      *cutind = NULL;
+	double   *cutval = NULL;
+	int      *feas = NULL;
 	int      addcuts = 0;
 	int      i, j, n;
 	double   objval;
@@ -600,10 +602,10 @@ mycutcallback(CPXCENVptr env,
 		goto TERMINATE;
 	}
 
-	if (oldnodeid == cutinfo->nodeid) {
+	if (oldnodeid == cutinfo->nodeid){
 		count_same_node++;
 	}
-	else {
+	else{
 		count_same_node = 0;
 	}
 
@@ -664,19 +666,19 @@ mycutcallback(CPXCENVptr env,
 	//tolerance_sep = -0.01;
 	flag_solve_SP = 0;
 	int_feas = NO;
-	if (wherefrom == CPX_CALLBACK_MIP_CUT_FEAS) {
+	if (wherefrom == CPX_CALLBACK_MIP_CUT_FEAS){
 		flag_solve_SP = 1;
 		tolerance_sep = -0.000000000001;
 		int_feas = YES;
 		//tolerance_sep = -0.001;
 	}
-	else {
+	else{
 		if (depth == 0 && ABS(objval - old_objval) > epsilon_LP) {
 			flag_solve_SP = 1;
 			old_objval = objval;
 		}
-		else {
-			if (depth > 0 && depth % 10 == 0 && count_same_node < 2) {
+		else{
+			if (depth > 0 && depth % 10 == 0 && count_same_node < 2){
 				flag_solve_SP = 1;
 				old_objval = objval;
 
@@ -685,93 +687,86 @@ mycutcallback(CPXCENVptr env,
 	}
 
 	count_added = 0;
-	if (flag_solve_SP == 1) {
+	if (flag_solve_SP == 1){
 		status = CPXgetcallbacknodex(env, cbdata, wherefrom, x, 0, numcols - 1);
 		if (status) {
 			fprintf(stderr, "Failed to get node solution.\n");
 			goto TERMINATE;
 		}
-		SEC_viol = exact_separation_SEC(int_feas, x);
-		if (SEC_viol < tolerance_sep) {
-			if (int_feas == YES) {
+		SEC_viol = exact_separation_SEC(int_feas,x);
+		if (SEC_viol < tolerance_sep){
+			if (int_feas == YES){
 				sepcut.cutnz = 0;
 				for (i = 0; i < cutset[0].dim; i++) {
 					for (j = 0; j < cutset[0].dim; j++) {
 						if (i != j) {
 							sepcut.cutind[sepcut.cutnz] = index_e[cutset[0].S[i]][cutset[0].S[j]];
+							//printf("y[%d][%d] + ", index_i[sepcut.cutind[sepcut.cutnz]] + 1, index_j[sepcut.cutind[sepcut.cutnz]] + 1);
 							sepcut.cutval[sepcut.cutnz++] = 1;
 						}
 					}
 				}
-				int e;
-
-				for (e = 0; e < sepcut.cutnz; e++)
-					printf("y[%d][%d] + ", index_i[e] + 1, index_j[e] + 1);
-				printf("<= %d \n", cutset[0].dim - 1);
-
-				status = CPXcutcallbackadd(env, cbdata, wherefrom, sepcut.cutnz, cutset[0].dim - 1, 'L', sepcut.cutind, sepcut.cutval, CPX_USECUT_PURGE);
+				//int e;
+				//for (e = 0; e < sepcut.cutnz; e++)
+					
+				//printf("<= %d \n", cutset[0].dim - 1);
+				
+				status = CPXcutcallbackadd(env, cbdata, wherefrom, sepcut.cutnz, cutset[0].dim - 1, 'L', sepcut.cutind, sepcut.cutval, CPX_USECUT_FORCE);
 				count_added++;
-				if (n_conn_comp > 2) {
-					for (n = 1; n < n_conn_comp; n++) {
+				if (n_conn_comp > 2){
+					for (n = 1; n < n_conn_comp; n++){
 						sepcut.cutnz = 0;
 						for (i = 0; i < cutset[n].dim; i++) {
 							for (j = 0; j < cutset[n].dim; j++) {
 								if (i != j) {
 									sepcut.cutind[sepcut.cutnz] = index_e[cutset[n].S[i]][cutset[n].S[j]];
+									//printf("y[%d][%d] + ", index_i[sepcut.cutind[sepcut.cutnz]] + 1, index_j[sepcut.cutind[sepcut.cutnz]] + 1);
 									sepcut.cutval[sepcut.cutnz++] = 1;
 								}
 							}
-							for (e = 0; e < sepcut.cutnz; e++)
-								printf("y[%d][%d] + ", index_i[e] + 1, index_j[e] + 1);
-							printf("<= %d \n", cutset[n].dim - 1);
 							status = CPXcutcallbackadd(env, cbdata, wherefrom, sepcut.cutnz, cutset[n].dim - 1, 'L', sepcut.cutind, sepcut.cutval, CPX_USECUT_PURGE);
 							count_added++;
-
+							
 						}
-
-
-
-
-
 					}
 				}
 			}
-			else {
-				for (n = 0; n < N - 1; n++) {
+			else{
+				for (n = 0; n < N - 1; n++){
 					sepcut.cutnz = 0;
 					lhs = 0;
-					if (cutset[n].dim > 2) { //Question here, should it be >= 2?
-						for (i = 0; i < cutset[n].dim; i++) {
+					if (cutset[n].dim > 2){ //Question here, should it be >= 2?
+						for (i = 0; i < cutset[n].dim ; i++) {
 							for (j = 0; j < cutset[n].dim; j++) {
 								if (i != j) {
-									sepcut.cutind[sepcut.cutnz] = index_e[cutset[n].S[i]][cutset[n].S[j]];
-									sepcut.cutval[sepcut.cutnz++] = 1;
-									lhs += x[index_e[cutset[n].S[i]][cutset[n].S[j]]];
+									if (cutset[n].S[i] != N) {
+										if (cutset[n].S[j] != 0) {
+											sepcut.cutind[sepcut.cutnz] = index_e[cutset[n].S[i]][cutset[n].S[j]];
+											sepcut.cutval[sepcut.cutnz++] = 1;
+											lhs += x[index_e[cutset[n].S[i]][cutset[n].S[j]]];
+										}
+									}
 								}
 							}
 						}
-						if (lhs - (cutset[n].dim - 1) > 0.0001) {
-							int e;
-							for (e = 0; e < sepcut.cutnz; e++)
-								printf("y[%d][%d] + ", index_i[e] + 1, index_j[e] + 1);
-							printf("<= %d \n", cutset[n].dim - 1);
-
+						if (lhs - (cutset[n].dim - 1) > 0.0001){
+							/*int e;
+							for (e = 0; e < sepcut.cutnz; e++) 
+								printf("y[%d][%d] + ", index_i[sepcut.cutind[e]] + 1, index_j[sepcut.cutind[e]] + 1);
+							printf("<= %d \n", cutset[n].dim - 1);*/
+							
 							status = CPXcutcallbackadd(env, cbdata, wherefrom, sepcut.cutnz, cutset[n].dim - 1, 'L', sepcut.cutind, sepcut.cutval, CPX_USECUT_PURGE);
 							count_added++;
 						}
 					}
-
-
-
-
 				}
 			}
 		}
 	}
 
+	
 
-
-	if (count_added > 0) {
+	if (count_added > 0){
 		stop_cutgen = 0;
 	}
 	else
@@ -1016,7 +1011,7 @@ TERMINATE:
 //}
 //
 //
-void free_and_null(char** ptr)
+void free_and_null(char **ptr)
 {
 	if (*ptr != NULL) {
 		free(*ptr);
