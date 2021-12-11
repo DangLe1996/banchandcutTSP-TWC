@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 *.so
 *.o
+banchandcutTSP/ATSP.so
+*.so
